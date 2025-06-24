@@ -3,141 +3,141 @@ const { NodeConnectionType } = require('n8n-workflow');
 class GestorClientesMax {
   constructor() {
     this.description = {
-      displayName: 'Gestor Clientes Max',
-      name: 'gestorClientesMax',
-      icon: 'file:gestorclientes.svg',
-      group: ['transform'],
-      version: 1,
-      subtitle: '={{$parameter.resource + ": " + $parameter.operation}}',
-      description: 'Integração com API de agenda para gerenciar clientes e agendamentos',
-      defaults: {
-        name: 'Gestor Clientes Max',
+    displayName: 'Gestor Clientes Max',
+    name: 'gestorClientesMax',
+    icon: 'file:gestorclientes.svg',
+    group: ['transform'],
+    version: 1,
+    subtitle: '={{$parameter.resource + ": " + $parameter.operation}}',
+    description: 'Integração com API de agenda para gerenciar clientes e agendamentos',
+    defaults: {
+      name: 'Gestor Clientes Max',
+    },
+    inputs: [
+      {
+        displayName: '',
+        type: NodeConnectionType.Main,
       },
-      inputs: [
-        {
-          displayName: '',
-          type: NodeConnectionType.Main,
-        },
-      ],
-      outputs: [
-        {
-          displayName: '',
-          type: NodeConnectionType.Main,
-        },
-      ],
-      properties: [
-        {
-          displayName: 'Resource',
-          name: 'resource',
-          type: 'options',
-          noDataExpression: true,
-          options: [
-            {
-              name: 'Cliente',
-              value: 'client',
-            },
-            {
-              name: 'Agendamento',
-              value: 'appointment',
-            },
-          ],
-          default: 'client',
-        },
-        {
-          displayName: 'Operation',
-          name: 'operation',
-          type: 'options',
-          noDataExpression: true,
-          displayOptions: {
-            show: {
-              resource: ['client'],
-            },
+    ],
+    outputs: [
+      {
+        displayName: '',
+        type: NodeConnectionType.Main,
+      },
+    ],
+    properties: [
+      {
+        displayName: 'Resource',
+        name: 'resource',
+        type: 'options',
+        noDataExpression: true,
+        options: [
+          {
+            name: 'Cliente',
+            value: 'client',
           },
-          options: [
-            {
-              name: 'Buscar Todos',
-              value: 'getAll',
-              description: 'Buscar todos os clientes',
-              action: 'Buscar todos os clientes',
-            },
-            {
-              name: 'Criar',
-              value: 'create',
-              description: 'Criar um novo cliente',
-              action: 'Criar um cliente',
-            },
-          ],
-          default: 'getAll',
-        },
-        {
-          displayName: 'Operation',
-          name: 'operation',
-          type: 'options',
-          noDataExpression: true,
-          displayOptions: {
-            show: {
-              resource: ['appointment'],
-            },
+          {
+            name: 'Agendamento',
+            value: 'appointment',
           },
-          options: [
-            {
-              name: 'Buscar Todos',
-              value: 'getAll',
-              description: 'Buscar todos os agendamentos',
-              action: 'Buscar todos os agendamentos',
-            },
-          ],
-          default: 'getAll',
-        },
-        {
-          displayName: 'URL Base da API',
-          name: 'baseUrl',
-          type: 'string',
-          default: 'https://agenda.anthonymax.com/api',
-          description: 'URL base para a API de Agenda',
-        },
-        {
-          displayName: 'Nome',
-          name: 'name',
-          type: 'string',
-          displayOptions: {
-            show: {
-              resource: ['client'],
-              operation: ['create'],
-            },
+        ],
+        default: 'client',
+      },
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ['client'],
           },
-          default: '',
-          required: true,
-          description: 'Nome do cliente',
         },
-        {
-          displayName: 'Email',
-          name: 'email',
-          type: 'string',
-          displayOptions: {
-            show: {
-              resource: ['client'],
-              operation: ['create'],
-            },
+        options: [
+          {
+            name: 'Buscar Todos',
+            value: 'getAll',
+            description: 'Buscar todos os clientes',
+            action: 'Buscar todos os clientes',
           },
-          default: '',
-          required: true,
-          description: 'Endereço de email do cliente',
-        },
-        {
-          displayName: 'Telefone',
-          name: 'phone',
-          type: 'string',
-          displayOptions: {
-            show: {
-              resource: ['client'],
-              operation: ['create'],
-            },
+          {
+            name: 'Criar',
+            value: 'create',
+            description: 'Criar um novo cliente',
+            action: 'Criar um cliente',
           },
-          default: '',
-          required: true,
-          description: 'Número de telefone do cliente',
+        ],
+        default: 'getAll',
+      },
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ['appointment'],
+          },
         },
+        options: [
+          {
+            name: 'Buscar Todos',
+            value: 'getAll',
+            description: 'Buscar todos os agendamentos',
+            action: 'Buscar todos os agendamentos',
+          },
+        ],
+        default: 'getAll',
+      },
+      {
+        displayName: 'URL Base da API',
+        name: 'baseUrl',
+        type: 'string',
+        default: 'https://agenda.anthonymax.com/api',
+        description: 'URL base para a API de Agenda',
+      },
+      {
+        displayName: 'Nome',
+        name: 'name',
+        type: 'string',
+        displayOptions: {
+          show: {
+            resource: ['client'],
+            operation: ['create'],
+          },
+        },
+        default: '',
+        required: true,
+        description: 'Nome do cliente',
+      },
+      {
+        displayName: 'Email',
+        name: 'email',
+        type: 'string',
+        displayOptions: {
+          show: {
+            resource: ['client'],
+            operation: ['create'],
+          },
+        },
+        default: '',
+        required: true,
+        description: 'Endereço de email do cliente',
+      },
+      {
+        displayName: 'Telefone',
+        name: 'phone',
+        type: 'string',
+        displayOptions: {
+          show: {
+            resource: ['client'],
+            operation: ['create'],
+          },
+        },
+        default: '',
+        required: true,
+        description: 'Número de telefone do cliente',
+              },
       ],
     };
   }
