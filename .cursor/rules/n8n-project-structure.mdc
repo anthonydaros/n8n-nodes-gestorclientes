@@ -1,0 +1,242 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# N8n Project Structure Rules
+
+Regras para manter a estrutura do projeto organizada seguindo o padrão estabelecido em [package.json](mdc:package.json) e [index.js](mdc:index.js).
+
+## Estrutura de Diretórios
+
+```
+projeto/
+├── nodes/                    # Diretório principal dos nodes
+│   └── NomeDoNode/          # Um diretório por node
+│       ├── NomeDoNode.node.js   # Arquivo principal do node
+│       └── icone.svg            # Ícone personalizado (opcional)
+├── credentials/             # Credenciais para APIs (quando necessário)
+│   └── MinhaApi.credentials.js
+├── index.js                # Entry point que exporta nodes e credenciais
+├── package.json            # Configuração do pacote npm
+├── README.md              # Documentação
+└── .gitignore             # Arquivos a ignorar
+
+NÃO incluir:
+❌ src/ (estrutura TypeScript desnecessária)
+❌ dist/ (builds intermediários)
+❌ arquivos de configuração complexos
+❌ dependências desnecessárias
+```
+
+## Nomenclatura de Arquivos
+
+### 1. Nodes
+- **Diretório**: `PascalCase` (ex: `GestorClientesMax/`)
+- **Arquivo**: `PascalCase.node.js` (ex: `GestorClientesMax.node.js`)
+- **Classe**: `PascalCase` (ex: `class GestorClientesMax`)
+- **Nome interno**: `camelCase` (ex: `name: 'gestorClientesMax'`)
+
+### 2. Credenciais
+- **Arquivo**: `PascalCase.credentials.js` (ex: `AgendaApi.credentials.js`)
+- **Classe**: `PascalCase` + `Credentials` (ex: `class AgendaApiCredentials`)
+- **Nome interno**: `camelCase` + `Credentials` (ex: `name: 'agendaApiCredentials'`)
+
+### 3. Ícones
+- **Formato**: `.svg` preferencial
+- **Nome**: `lowercase-com-hifens.svg` (ex: `gestor-clientes.svg`)
+- **Referência**: `icon: 'file:icone.svg'`
+
+## Package.json Configuration
+
+Configuração obrigatória no [package.json](mdc:package.json):
+
+```json
+{
+  "name": "@usuario/n8n-nodes-projeto",
+  "version": "x.x.x",
+  "main": "index.js",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "n8n-nodes"
+  ],
+  "n8n": {
+    "nodes": [
+      "nodes/MeuNode/MeuNode.node.js"
+    ],
+    "credentials": [
+      "credentials/MinhaApi.credentials.js"
+    ]
+  },
+  "files": [
+    "nodes/**/*",
+    "credentials/**/*",
+    "index.js",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
+```
+
+## Index.js Configuration
+
+O [index.js](mdc:index.js) deve exportar apenas o necessário:
+
+```javascript
+module.exports = {
+  nodes: [
+    'nodes/MeuNode/MeuNode.node.js',
+    'nodes/OutroNode/OutroNode.node.js'
+  ],
+  credentials: [
+    'credentials/MinhaApi.credentials.js'
+  ]
+};
+```
+
+## Organização de Código
+
+### 1. Estrutura de Classe do Node
+```javascript
+const { NodeConnectionType } = require('n8n-workflow');
+
+class MeuNode {
+  constructor() {
+    this.description = {
+      // Configuração do node
+    };
+  }
+
+  async execute() {
+    // Lógica de execução
+  }
+
+  // Métodos auxiliares (se necessário)
+  async makeApiCall(method, endpoint, data) {
+    // Helper para chamadas de API
+  }
+}
+
+module.exports = { MeuNode };
+```
+
+### 2. Agrupamento de Properties
+Organize as propriedades na seguinte ordem:
+1. **Resource** - Tipo de recurso
+2. **Operation** - Operação a realizar
+3. **Configurações gerais** - URL, versão API, etc.
+4. **Campos específicos** - Por resource/operation
+5. **Configurações avançadas** - Headers, proxy, etc.
+
+### 3. Conditional Fields
+Use `displayOptions` para mostrar campos condicionalmente:
+```javascript
+displayOptions: {
+  show: {
+    resource: ['client'],
+    operation: ['create', 'update']
+  }
+}
+```
+
+## Versionamento
+
+### 1. Semantic Versioning
+- **MAJOR** (x.0.0): Mudanças incompatíveis
+- **MINOR** (0.x.0): Novas funcionalidades compatíveis
+- **PATCH** (0.0.x): Correções de bugs
+
+### 2. Estratégia de Release
+1. Desenvolva em branch separada
+2. Teste localmente
+3. Increment versão no package.json
+4. Commit com mensagem descritiva
+5. Publique no npm: `npm publish`
+6. Push para GitHub
+
+## Dependências
+
+### 1. Manter Mínimas
+- **PeerDependency**: Apenas `n8n-workflow`
+- **DevDependencies**: Evitar se possível
+- **Dependencies**: Apenas se absolutamente necessário
+
+### 2. Evitar
+❌ TypeScript (usar JavaScript puro)
+❌ Build tools complexos
+❌ Linters pesados
+❌ Testing frameworks (para community nodes simples)
+
+## Documentação
+
+### 1. README.md Mínimo
+```markdown
+# @usuario/n8n-nodes-projeto
+
+Descrição breve do que faz.
+
+## Installation
+npm install @usuario/n8n-nodes-projeto
+
+## Usage
+1. Instale o pacote
+2. Adicione credenciais (se necessário)
+3. Use os nodes nos workflows
+
+## License
+MIT
+```
+
+### 2. Comentários no Código
+- Documente lógica complexa
+- Explique decisões não óbvias
+- Use JSDoc para métodos públicos se necessário
+
+## Testes e Validação
+
+### 1. Teste Manual
+1. Instale localmente: `npm link`
+2. No n8n: `npm link @usuario/n8n-nodes-projeto`
+3. Reinicie n8n
+4. Teste todas as operações
+
+### 2. Verificação Antes da Publicação
+```bash
+npm run publish:check  # Verifica o que será publicado
+npm pack --dry-run     # Simula publicação
+```
+
+## Git e Controle de Versão
+
+### 1. .gitignore Mínimo
+```
+node_modules/
+*.log
+.vscode/
+.idea/
+.DS_Store
+```
+
+### 2. Commit Messages
+- `feat: adiciona nova funcionalidade`
+- `fix: corrige bug específico`
+- `docs: atualiza documentação`
+- `refactor: melhora código sem mudar funcionalidade`
+
+## Performance
+
+### 1. Otimizações
+- Use `json: true` nas requests HTTP
+- Implemente paginação para grandes datasets
+- Cache credenciais dentro do método execute
+- Evite loops desnecessários
+
+### 2. Memory Management
+- Não armazene grandes objetos em memória
+- Processe items em lotes se necessário
+- Use streams para arquivos grandes
+
+Mantenha sempre a simplicidade e siga o padrão estabelecido no projeto atual.

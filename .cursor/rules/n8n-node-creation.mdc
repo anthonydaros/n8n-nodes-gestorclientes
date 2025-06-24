@@ -1,0 +1,315 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# N8n Node Creation Rules
+
+Este projeto segue o padrão de community nodes do n8n baseado na referência [@devlikeapro/n8n-nodes-chatwoot](mdc:https:/github.com/devlikeapro/n8n-nodes-chatwoot).
+
+## Estrutura do Projeto
+
+### Arquivos Essenciais
+- [index.js](mdc:index.js) - Entry point que exporta todos os nodes
+- [package.json](mdc:package.json) - Configuração do pacote npm
+- [README.md](mdc:README.md) - Documentação básica
+- `nodes/` - Diretório contendo todos os nodes
+- `credentials/` - Diretório para credenciais (quando necessário)
+
+### Estrutura de Node
+Cada node deve estar em `nodes/NomeDoNode/`:
+- `NomeDoNode.node.js` - Arquivo principal do node
+- `icone.svg` - Ícone personalizado (opcional)
+
+## Regras para Criação de Nodes
+
+### 1. Nome e Identificação
+```javascript
+class MeuNode {
+  constructor() {
+    this.description = {
+      displayName: 'Nome Amigável', // Nome que aparece no n8n
+      name: 'nomeInterno',           // Nome interno (camelCase)
+      icon: 'file:icone.svg',        // Ícone personalizado ou 'fa:icon-name'
+      group: ['transform'],          // Categoria do node
+      version: 1,                    // Versão do node
+      subtitle: '={{$parameter.operation}}', // Subtítulo dinâmico
+      description: 'Descrição do que o node faz',
+    }
+  }
+}
+```
+
+### 2. Configuração de Inputs/Outputs
+```javascript
+inputs: [
+  {
+    displayName: '',
+    type: NodeConnectionType.Main,
+  },
+],
+outputs: [
+  {
+    displayName: '',
+    type: NodeConnectionType.Main,
+  },
+],
+```
+
+### 3. Propriedades do Node
+```javascript
+properties: [
+  // Resource (tipo de recurso)
+  {
+    displayName: 'Resource',
+    name: 'resource',
+    type: 'options',
+    noDataExpression: true,
+    options: [
+      { name: 'Cliente', value: 'client' },
+      { name: 'Produto', value: 'product' },
+    ],
+    default: 'client',
+  },
+  
+  // Operation (operação a realizar)
+  {
+    displayName: 'Operation',
+    name: 'operation',
+    type: 'options',
+    noDataExpression: true,
+    displayOptions: {
+      show: { resource: ['client'] },
+    },
+    options: [
+      { name: 'Buscar Todos', value: 'getAll' },
+      { name: 'Criar', value: 'create' },
+      { name: 'Atualizar', value: 'update' },
+      { name: 'Deletar', value: 'delete' },
+    ],
+    default: 'getAll',
+  },
+]
+```
+
+### 4. Campos Condicionais
+Use `displayOptions` para mostrar campos apenas quando necessário:
+```javascript
+{
+  displayName: 'Nome',
+  name: 'name',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['client'],
+      operation: ['create', 'update'],
+    },
+  },
+  required: true,
+  description: 'Nome do cliente',
+}
+```
+
+### 5. Implementação do Execute
+```javascript
+async execute() {
+  const items = this.getInputData();
+  const returnData = [];
+
+  for (let i = 0; i < items.length; i++) {
+    try {
+      const resource = this.getNodeParameter('resource', i);
+      const operation = this.getNodeParameter('operation', i);
+      
+      let responseData;
+
+      if (resource === 'client') {
+        if (operation === 'getAll') {
+          responseData = await this.makeApiCall('GET', '/clients');
+        } else if (operation === 'create') {
+          const name = this.getNodeParameter('name', i);
+          responseData = await this.makeApiCall('POST', '/clients', { name });
+        }
+      }
+
+      returnData.push({
+        json: responseData,
+        pairedItem: { item: i },
+      });
+    } catch (error) {
+      if (this.continueOnFail()) {
+        returnData.push({
+          json: { error: error.message },
+          pairedItem: { item: i },
+        });
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  return [returnData];
+}
+```
+
+## Configuração com API Keys
+
+### 1. Criando Credenciais
+Arquivo `credentials/MinhaApiCredentials.credentials.js`:
+```javascript
+class MinhaApiCredentials {
+  constructor() {
+    this.name = 'minhaApiCredentials';
+    this.displayName = 'Minha API Credentials';
+    this.documentationUrl = 'https://docs.minhaapi.com';
+    this.properties = [
+      {
+        displayName: 'API Key',
+        name: 'apiKey',
+        type: 'string',
+        typeOptions: {
+          password: true, // Campo senha
+        },
+        default: '',
+        required: true,
+        description: 'Sua API Key da Minha API',
+      },
+      {
+        displayName: 'Base URL',
+        name: 'baseUrl',
+        type: 'string',
+        default: 'https://api.minhaapi.com',
+        required: true,
+        description: 'URL base da API',
+      },
+    ];
+  }
+
+  async authenticate(credentials, requestOptions) {
+    requestOptions.headers = requestOptions.headers || {};
+    requestOptions.headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+    requestOptions.headers['Content-Type'] = 'application/json';
+    return requestOptions;
+  }
+}
+
+module.exports = { MinhaApiCredentials };
+```
+
+### 2. Usando Credenciais no Node
+```javascript
+// No description do node
+credentials: [
+  {
+    name: 'minhaApiCredentials',
+    required: true,
+  },
+],
+
+// No método execute
+async execute() {
+  const credentials = await this.getCredentials('minhaApiCredentials');
+  const baseUrl = credentials.baseUrl;
+  
+  const options = {
+    method: 'GET',
+    url: `${baseUrl}/endpoint`,
+    headers: {
+      'Authorization': `Bearer ${credentials.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    json: true,
+  };
+  
+  const responseData = await this.helpers.httpRequest(options);
+}
+```
+
+### 3. Variáveis Comuns para APIs
+
+#### Headers de Autenticação
+```javascript
+// Bearer Token
+'Authorization': `Bearer ${credentials.apiKey}`
+
+// API Key no Header
+'X-API-Key': credentials.apiKey
+
+// Basic Auth
+'Authorization': `Basic ${Buffer.from(credentials.username + ':' + credentials.password).toString('base64')}`
+```
+
+#### Query Parameters
+```javascript
+const options = {
+  method: 'GET',
+  url: `${baseUrl}/endpoint`,
+  qs: {
+    api_key: credentials.apiKey,
+    format: 'json',
+  },
+  json: true,
+};
+```
+
+## Package.json Configuration
+
+O [package.json](mdc:package.json) deve incluir:
+```json
+{
+  "name": "@seu-usuario/n8n-nodes-seuprojeto",
+  "main": "index.js",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "n8n-nodes"
+  ],
+  "n8n": {
+    "nodes": [
+      "nodes/MeuNode/MeuNode.node.js"
+    ],
+    "credentials": [
+      "credentials/MinhaApiCredentials.credentials.js"
+    ]
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
+```
+
+## Entry Point Configuration
+
+O [index.js](mdc:index.js) deve exportar todos os nodes e credenciais:
+```javascript
+module.exports = {
+  nodes: [
+    'nodes/MeuNode/MeuNode.node.js'
+  ],
+  credentials: [
+    'credentials/MinhaApiCredentials.credentials.js'
+  ]
+};
+```
+
+## Tipos de Campo Comuns
+
+- `string` - Campo de texto
+- `number` - Campo numérico
+- `boolean` - Checkbox
+- `options` - Lista de opções
+- `multiOptions` - Múltipla seleção
+- `dateTime` - Data e hora
+- `json` - Editor JSON
+- `color` - Seletor de cor
+
+## Boas Práticas
+
+1. **Sempre trate erros** com try/catch
+2. **Use displayOptions** para campos condicionais
+3. **Implemente continueOnFail()** para robustez
+4. **Valide parâmetros** antes de usar
+5. **Use nomes descritivos** em português
+6. **Documente campos** com description
+7. **Teste todas as operações** CRUD
+8. **Mantenha estrutura simples** seguindo a referência

@@ -1,0 +1,424 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# N8n API Integration Patterns
+
+Padrões específicos para integração com APIs em nodes n8n baseados no projeto [index.js](mdc:index.js).
+
+## Variáveis de Ambiente Comuns
+
+### 1. Configuração de URLs Base
+```javascript
+{
+  displayName: 'URL Base da API',
+  name: 'baseUrl',
+  type: 'string',
+  default: 'https://api.exemplo.com',
+  required: true,
+  description: 'URL base da API (sem barra final)',
+}
+```
+
+### 2. Configuração de Versão da API
+```javascript
+{
+  displayName: 'Versão da API',
+  name: 'apiVersion',
+  type: 'options',
+  options: [
+    { name: 'v1', value: 'v1' },
+    { name: 'v2', value: 'v2' },
+  ],
+  default: 'v1',
+  description: 'Versão da API a utilizar',
+}
+```
+
+## Padrões de Autenticação
+
+### 1. API Key no Header
+```javascript
+// Credencial
+{
+  displayName: 'API Key',
+  name: 'apiKey',
+  type: 'string',
+  typeOptions: { password: true },
+  required: true,
+}
+
+// Uso no node
+const options = {
+  headers: {
+    'X-API-Key': credentials.apiKey,
+    'Authorization': `ApiKey ${credentials.apiKey}`,
+  }
+};
+```
+
+### 2. Bearer Token
+```javascript
+// Credencial
+{
+  displayName: 'Access Token',
+  name: 'accessToken',
+  type: 'string',
+  typeOptions: { password: true },
+  required: true,
+}
+
+// Uso no node
+const options = {
+  headers: {
+    'Authorization': `Bearer ${credentials.accessToken}`,
+  }
+};
+```
+
+### 3. Basic Authentication
+```javascript
+// Credenciais
+{
+  displayName: 'Username',
+  name: 'username',
+  type: 'string',
+  required: true,
+},
+{
+  displayName: 'Password',
+  name: 'password',
+  type: 'string',
+  typeOptions: { password: true },
+  required: true,
+}
+
+// Uso no node
+const auth = Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64');
+const options = {
+  headers: {
+    'Authorization': `Basic ${auth}`,
+  }
+};
+```
+
+### 4. OAuth 2.0
+```javascript
+// Credenciais completas OAuth
+{
+  displayName: 'Client ID',
+  name: 'clientId',
+  type: 'string',
+  required: true,
+},
+{
+  displayName: 'Client Secret',
+  name: 'clientSecret',
+  type: 'string',
+  typeOptions: { password: true },
+  required: true,
+},
+{
+  displayName: 'Redirect URI',
+  name: 'redirectUri',
+  type: 'string',
+  default: 'http://localhost:3000/callback',
+}
+```
+
+## Padrões de Request
+
+### 1. GET com Query Parameters
+```javascript
+async makeGetRequest(endpoint, params = {}) {
+  const credentials = await this.getCredentials('minhaApiCredentials');
+  const baseUrl = credentials.baseUrl;
+  
+  const options = {
+    method: 'GET',
+    url: `${baseUrl}${endpoint}`,
+    headers: {
+      'Authorization': `Bearer ${credentials.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    qs: params,
+    json: true,
+  };
+  
+  return await this.helpers.httpRequest(options);
+}
+```
+
+### 2. POST com Body JSON
+```javascript
+async makePostRequest(endpoint, data) {
+  const credentials = await this.getCredentials('minhaApiCredentials');
+  
+  const options = {
+    method: 'POST',
+    url: `${credentials.baseUrl}${endpoint}`,
+    headers: {
+      'Authorization': `Bearer ${credentials.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: data,
+    json: true,
+  };
+  
+  return await this.helpers.httpRequest(options);
+}
+```
+
+### 3. PUT/PATCH para Updates
+```javascript
+async makeUpdateRequest(endpoint, data, method = 'PUT') {
+  const credentials = await this.getCredentials('minhaApiCredentials');
+  
+  const options = {
+    method,
+    url: `${credentials.baseUrl}${endpoint}`,
+    headers: {
+      'Authorization': `Bearer ${credentials.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: data,
+    json: true,
+  };
+  
+  return await this.helpers.httpRequest(options);
+}
+```
+
+### 4. DELETE Requests
+```javascript
+async makeDeleteRequest(endpoint) {
+  const credentials = await this.getCredentials('minhaApiCredentials');
+  
+  const options = {
+    method: 'DELETE',
+    url: `${credentials.baseUrl}${endpoint}`,
+    headers: {
+      'Authorization': `Bearer ${credentials.apiKey}`,
+    },
+    json: true,
+  };
+  
+  return await this.helpers.httpRequest(options);
+}
+```
+
+## Tratamento de Erros Comuns
+
+### 1. Rate Limiting
+```javascript
+async makeRequestWithRetry(options, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await this.helpers.httpRequest(options);
+    } catch (error) {
+      if (error.response?.status === 429 && attempt < maxRetries) {
+        const retryAfter = error.response.headers['retry-after'] || 60;
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+```
+
+### 2. Tratamento de Status Codes
+```javascript
+async handleApiResponse(options) {
+  try {
+    const response = await this.helpers.httpRequest(options);
+    return response;
+  } catch (error) {
+    const statusCode = error.response?.status;
+    const message = error.response?.data?.message || error.message;
+    
+    switch (statusCode) {
+      case 400:
+        throw new Error(`Bad Request: ${message}`);
+      case 401:
+        throw new Error('Unauthorized: Verifique suas credenciais');
+      case 403:
+        throw new Error('Forbidden: Sem permissão para esta operação');
+      case 404:
+        throw new Error('Not Found: Recurso não encontrado');
+      case 429:
+        throw new Error('Rate Limit: Muitas requisições. Tente novamente mais tarde');
+      case 500:
+        throw new Error('Server Error: Erro interno do servidor');
+      default:
+        throw new Error(`API Error ${statusCode}: ${message}`);
+    }
+  }
+}
+```
+
+## Paginação de Resultados
+
+### 1. Offset/Limit Pagination
+```javascript
+async getAllItemsPaginated(endpoint, params = {}) {
+  const allItems = [];
+  let offset = 0;
+  const limit = 100;
+  let hasMore = true;
+  
+  while (hasMore) {
+    const response = await this.makeGetRequest(endpoint, {
+      ...params,
+      offset,
+      limit,
+    });
+    
+    allItems.push(...response.data);
+    hasMore = response.data.length === limit;
+    offset += limit;
+  }
+  
+  return allItems;
+}
+```
+
+### 2. Cursor-based Pagination
+```javascript
+async getAllItemsCursor(endpoint, params = {}) {
+  const allItems = [];
+  let cursor = null;
+  
+  do {
+    const response = await this.makeGetRequest(endpoint, {
+      ...params,
+      cursor,
+      limit: 100,
+    });
+    
+    allItems.push(...response.data);
+    cursor = response.pagination?.next_cursor;
+  } while (cursor);
+  
+  return allItems;
+}
+```
+
+## Configurações Avançadas
+
+### 1. Timeout Customizado
+```javascript
+const options = {
+  method: 'GET',
+  url: endpoint,
+  timeout: 30000, // 30 segundos
+  json: true,
+};
+```
+
+### 2. Headers Customizados
+```javascript
+{
+  displayName: 'Headers Customizados',
+  name: 'customHeaders',
+  type: 'fixedCollection',
+  typeOptions: {
+    multipleValues: true,
+  },
+  default: {},
+  options: [
+    {
+      name: 'header',
+      displayName: 'Header',
+      values: [
+        {
+          displayName: 'Nome',
+          name: 'name',
+          type: 'string',
+          default: '',
+        },
+        {
+          displayName: 'Valor',
+          name: 'value',
+          type: 'string',
+          default: '',
+        },
+      ],
+    },
+  ],
+}
+```
+
+### 3. Proxy Configuration
+```javascript
+{
+  displayName: 'Usar Proxy',
+  name: 'useProxy',
+  type: 'boolean',
+  default: false,
+},
+{
+  displayName: 'Proxy URL',
+  name: 'proxyUrl',
+  type: 'string',
+  displayOptions: {
+    show: { useProxy: [true] },
+  },
+  default: '',
+  placeholder: 'http://proxy.empresa.com:8080',
+}
+```
+
+## Validação de Dados
+
+### 1. Validação de URL
+```javascript
+function validateUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    throw new Error('URL inválida fornecida');
+  }
+}
+```
+
+### 2. Validação de Email
+```javascript
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new Error('Formato de email inválido');
+  }
+}
+```
+
+### 3. Sanitização de Dados
+```javascript
+function sanitizeInput(input) {
+  if (typeof input === 'string') {
+    return input.trim().replace(/[<>]/g, '');
+  }
+  return input;
+}
+```
+
+## Testing Patterns
+
+### 1. Mock de API para Testes
+```javascript
+// Para desenvolvimento/testes
+const isMockMode = process.env.NODE_ENV === 'development';
+
+if (isMockMode) {
+  return {
+    data: [
+      { id: 1, name: 'Cliente Teste' },
+      { id: 2, name: 'Cliente Exemplo' },
+    ],
+  };
+}
+```
+
+Essas regras devem ser seguidas para manter consistência com o padrão estabelecido no [package.json](mdc:package.json) e estrutura do projeto.
