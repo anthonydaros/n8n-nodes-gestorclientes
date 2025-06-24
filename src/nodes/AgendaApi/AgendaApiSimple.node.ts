@@ -9,15 +9,15 @@ import {
 
 export class AgendaApiSimple implements INodeType {
   description: INodeTypeDescription = {
-    displayName: 'Agenda API Simple',
-    name: 'agendaApiSimple',
-    icon: 'file:agenda.svg',
+    displayName: 'Gestor Clientes Max',
+    name: 'gestorClientesMax',
+    icon: 'fa:calendar-check',
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter.resource + ": " + $parameter.operation}}',
-    description: 'Simple integration with Agenda API for managing clients and appointments',
+    description: 'Integração com API de agenda para gerenciar clientes e agendamentos',
     defaults: {
-      name: 'Agenda API Simple',
+      name: 'Gestor Clientes Max',
     },
     inputs: [
       {
@@ -39,11 +39,11 @@ export class AgendaApiSimple implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: 'Client',
+            name: 'Cliente',
             value: 'client',
           },
           {
-            name: 'Appointment',
+            name: 'Agendamento',
             value: 'appointment',
           },
         ],
@@ -61,16 +61,16 @@ export class AgendaApiSimple implements INodeType {
         },
         options: [
           {
-            name: 'Get All',
+            name: 'Buscar Todos',
             value: 'getAll',
-            description: 'Get all clients',
-            action: 'Get all clients',
+            description: 'Buscar todos os clientes',
+            action: 'Buscar todos os clientes',
           },
           {
-            name: 'Create',
+            name: 'Criar',
             value: 'create',
-            description: 'Create a new client',
-            action: 'Create a client',
+            description: 'Criar um novo cliente',
+            action: 'Criar um cliente',
           },
         ],
         default: 'getAll',
@@ -87,23 +87,23 @@ export class AgendaApiSimple implements INodeType {
         },
         options: [
           {
-            name: 'Get All',
+            name: 'Buscar Todos',
             value: 'getAll',
-            description: 'Get all appointments',
-            action: 'Get all appointments',
+            description: 'Buscar todos os agendamentos',
+            action: 'Buscar todos os agendamentos',
           },
         ],
         default: 'getAll',
       },
       {
-        displayName: 'API Base URL',
+        displayName: 'URL Base da API',
         name: 'baseUrl',
         type: 'string',
         default: 'https://agenda.anthonymax.com/api',
-        description: 'Base URL for the Agenda API',
+        description: 'URL base para a API de Agenda',
       },
       {
-        displayName: 'Name',
+        displayName: 'Nome',
         name: 'name',
         type: 'string',
         displayOptions: {
@@ -114,7 +114,7 @@ export class AgendaApiSimple implements INodeType {
         },
         default: '',
         required: true,
-        description: 'Client name',
+        description: 'Nome do cliente',
       },
       {
         displayName: 'Email',
@@ -128,10 +128,10 @@ export class AgendaApiSimple implements INodeType {
         },
         default: '',
         required: true,
-        description: 'Client email address',
+        description: 'Endereço de email do cliente',
       },
       {
-        displayName: 'Phone',
+        displayName: 'Telefone',
         name: 'phone',
         type: 'string',
         displayOptions: {
@@ -142,7 +142,7 @@ export class AgendaApiSimple implements INodeType {
         },
         default: '',
         required: true,
-        description: 'Client phone number',
+        description: 'Número de telefone do cliente',
       },
     ],
   };
