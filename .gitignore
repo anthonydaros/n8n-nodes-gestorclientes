@@ -1,100 +1,12 @@
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
-
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
-
-# Testing
-coverage/
-.nyc_output
-*.lcov
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
 # Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
+*.log
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Temporary files
-.tmp/
-temp/
-tmp/
-
-# Editor/IDE files
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# n8n specific
-.n8n/
-cookies.txt
-
-# Test files
-**/*.test.js
-**/*.spec.js
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# rollup.js default build output
-dist/
-
-# Uncomment the public line in if your project uses Gatsby
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# .public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-.temp/
-.cache/ 
