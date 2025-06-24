@@ -1,0 +1,77 @@
+{
+  "name": "@devanthonymax/n8n-nodes-gestorclientes",
+  "version": "0.1.0",
+  "description": "N8n community nodes collection - agenda API integration and utilities",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "nodemon --exec \"pnpm run build\" --ext ts",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "clean": "rm -rf dist node_modules",
+    "prepare": "pnpm run build",
+    "prepack": "pnpm run build",
+    "verify": "pnpm run lint && pnpm run test && pnpm run build",
+    "publish:check": "npm pack --dry-run"
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "n8n-nodes",
+    "workflow",
+    "automation",
+    "api-integration",
+    "agenda",
+    "scheduling"
+  ],
+  "author": "Anthony Max",
+  "license": "MIT",
+  "packageManager": "pnpm@10.12.1",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.0.4",
+    "@typescript-eslint/eslint-plugin": "8.35.0",
+    "@typescript-eslint/parser": "8.35.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-prettier": "5.5.0",
+    "jest": "30.0.2",
+    "n8n-core": "1.14.1",
+    "n8n-workflow": "1.82.0",
+    "nodemon": "3.1.10",
+    "prettier": "3.6.0",
+    "ts-jest": "29.4.0",
+    "typescript": "5.8.3"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "n8n": {
+    "nodes": [
+      "dist/nodes/ExampleNode/ExampleNode.node.js",
+      "dist/nodes/AgendaApi/AgendaApiSimple.node.js"
+    ],
+    "credentials": []
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anthonydaros/n8n-nodes-gestorclientes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anthonydaros/n8n-nodes-gestorclientes/issues"
+  },
+  "homepage": "https://github.com/anthonydaros/n8n-nodes-gestorclientes#readme"
+}

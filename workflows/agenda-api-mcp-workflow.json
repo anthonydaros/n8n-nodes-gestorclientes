@@ -1,0 +1,455 @@
+{
+  "name": "MCP Agenda API - Workflow Completo",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "agenda-api-mcp"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "mcp-trigger-agenda",
+      "name": "MCP Server Trigger - Agenda API",
+      "webhookId": "agenda-api-mcp"
+    },
+    {
+      "parameters": {
+        "name": "login",
+        "description": "Autentica um usuário na API de Agenda. Requires: email, password",
+        "url": "https://agenda.anthonymax.com/api/login",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $parameter.body }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -300,
+        200
+      ],
+      "id": "http-login",
+      "name": "Login API"
+    },
+    {
+      "parameters": {
+        "name": "logout",
+        "description": "Finaliza a sessão do usuário na API de Agenda",
+        "url": "https://agenda.anthonymax.com/api/logout",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -100,
+        200
+      ],
+      "id": "http-logout",
+      "name": "Logout API"
+    },
+    {
+      "parameters": {
+        "name": "list_clients",
+        "description": "Lista todos os clientes do usuário autenticado",
+        "url": "https://agenda.anthonymax.com/api/clients",
+        "method": "GET",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        100,
+        200
+      ],
+      "id": "http-list-clients",
+      "name": "Listar Clientes"
+    },
+    {
+      "parameters": {
+        "name": "get_client",
+        "description": "Busca um cliente específico por ID. Requires: client_id (integer)",
+        "url": "https://agenda.anthonymax.com/api/clients/{{ $parameter.client_id }}",
+        "method": "GET",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        200
+      ],
+      "id": "http-get-client",
+      "name": "Buscar Cliente por ID"
+    },
+    {
+      "parameters": {
+        "name": "create_client",
+        "description": "Cria um novo cliente. Requires: name, email, phone. Optional: cpf, birthDate, cep, street, number, complement, neighborhood, city, state, address, notes, status, paymentStatus",
+        "url": "https://agenda.anthonymax.com/api/clients",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $parameter.body }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        200
+      ],
+      "id": "http-create-client",
+      "name": "Criar Cliente"
+    },
+    {
+      "parameters": {
+        "name": "update_client",
+        "description": "Atualiza um cliente existente. Requires: client_id (integer), body (JSON com campos a atualizar)",
+        "url": "https://agenda.anthonymax.com/api/clients/{{ $parameter.client_id }}",
+        "method": "PUT",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $parameter.body }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        200
+      ],
+      "id": "http-update-client",
+      "name": "Atualizar Cliente"
+    },
+    {
+      "parameters": {
+        "name": "delete_client",
+        "description": "Remove um cliente do sistema. Requires: client_id (integer)",
+        "url": "https://agenda.anthonymax.com/api/clients/{{ $parameter.client_id }}",
+        "method": "DELETE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        200
+      ],
+      "id": "http-delete-client",
+      "name": "Excluir Cliente"
+    },
+    {
+      "parameters": {
+        "name": "list_appointments",
+        "description": "Lista todos os agendamentos do usuário autenticado",
+        "url": "https://agenda.anthonymax.com/api/appointments",
+        "method": "GET",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        100,
+        400
+      ],
+      "id": "http-list-appointments",
+      "name": "Listar Agendamentos"
+    },
+    {
+      "parameters": {
+        "name": "create_appointment",
+        "description": "Cria um novo agendamento. Requires: clientId, title, description, startTime (Date object), endTime (Date object), status",
+        "url": "https://agenda.anthonymax.com/api/appointments",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $parameter.body }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        400
+      ],
+      "id": "http-create-appointment",
+      "name": "Criar Agendamento"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Login API": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logout API": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar Clientes": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Cliente por ID": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Excluir Cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar Agendamentos": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Agendamento": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Agenda API",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "",
+  "meta": {
+    "instanceId": ""
+  },
+  "tags": []
+} 
