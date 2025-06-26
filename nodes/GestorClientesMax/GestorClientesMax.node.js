@@ -1,8 +1,7 @@
 const { NodeConnectionType, NodeOperationError } = require('n8n-workflow');
 
 class GestorClientesMax {
-  constructor() {
-    this.description = {
+  description = {
       displayName: 'Gestor Clientes Max',
       name: 'gestorClientesMax',
       icon: 'file:gestorclientes.svg',
@@ -638,7 +637,6 @@ class GestorClientesMax {
         },
       ],
     };
-  }
 
   async execute() {
     const items = this.getInputData();
@@ -980,4 +978,4 @@ class GestorClientesMax {
   }
 }
 
-exports.GestorClientesMax = GestorClientesMax;
+module.exports = { GestorClientesMax };
