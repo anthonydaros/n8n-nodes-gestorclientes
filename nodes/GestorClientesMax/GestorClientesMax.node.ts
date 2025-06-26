@@ -1,7 +1,13 @@
-const { NodeConnectionType, NodeOperationError } = require('n8n-workflow');
+import type {
+  IExecuteFunctions,
+  INodeExecutionData,
+  INodeType,
+  INodeTypeDescription,
+} from 'n8n-workflow';
+import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
 
-class GestorClientesMax {
-  description = {
+export class GestorClientesMax implements INodeType {
+  description: INodeTypeDescription = {
       displayName: 'Gestor Clientes Max',
       name: 'gestorClientesMax',
       icon: 'file:gestorclientes.svg',
@@ -638,7 +644,7 @@ class GestorClientesMax {
       ],
     };
 
-  async execute() {
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
     const returnData = [];
     const credentials = await this.getCredentials('gestorClientesMaxApi');
@@ -651,11 +657,11 @@ class GestorClientesMax {
         let responseData;
 
         if (resource === 'client') {
-          responseData = await this.handleClientOperations(operation, i, credentials);
+          responseData = await handleClientOperations.call(this, operation, i, credentials);
         } else if (resource === 'appointment') {
-          responseData = await this.handleAppointmentOperations(operation, i, credentials);
+          responseData = await handleAppointmentOperations.call(this, operation, i, credentials);
         } else if (resource === 'financial') {
-          responseData = await this.handleFinancialOperations(operation, i, credentials);
+          responseData = await handleFinancialOperations.call(this, operation, i, credentials);
         }
 
         if (!responseData) {
@@ -687,7 +693,9 @@ class GestorClientesMax {
     return [returnData];
   }
 
-  async handleClientOperations(operation, itemIndex, credentials) {
+}
+
+async function handleClientOperations(this: IExecuteFunctions, operation: string, itemIndex: number, credentials: any) {
     const baseUrl = credentials.baseUrl;
     const apiKey = credentials.apiKey;
 
@@ -723,7 +731,7 @@ class GestorClientesMax {
 
 
       case 'create': {
-        const createData = {
+        const createData: any = {
           name: this.getNodeParameter('name', itemIndex),
           email: this.getNodeParameter('email', itemIndex),
           phone: this.getNodeParameter('phone', itemIndex),
@@ -746,7 +754,7 @@ class GestorClientesMax {
 
       case 'update': {
         const updateClientId = this.getNodeParameter('clientId', itemIndex);
-        const updateData = {
+        const updateData: any = {
           name: this.getNodeParameter('name', itemIndex),
           email: this.getNodeParameter('email', itemIndex),
           phone: this.getNodeParameter('phone', itemIndex),
@@ -781,9 +789,9 @@ class GestorClientesMax {
       default:
         throw new NodeOperationError(this.getNode(), `Unknown client operation: ${operation}`);
     }
-  }
+}
 
-  async handleAppointmentOperations(operation, itemIndex, credentials) {
+async function handleAppointmentOperations(this: IExecuteFunctions, operation: string, itemIndex: number, credentials: any) {
     const baseUrl = credentials.baseUrl;
     const apiKey = credentials.apiKey;
 
@@ -819,7 +827,7 @@ class GestorClientesMax {
 
 
       case 'create': {
-        const createData = {
+        const createData: any = {
           title: this.getNodeParameter('title', itemIndex),
           startTime: this.getNodeParameter('startTime', itemIndex),
           endTime: this.getNodeParameter('endTime', itemIndex),
@@ -850,7 +858,7 @@ class GestorClientesMax {
 
       case 'update': {
         const updateAppointmentId = this.getNodeParameter('appointmentId', itemIndex);
-        const updateData = {
+        const updateData: any = {
           title: this.getNodeParameter('title', itemIndex),
           startTime: this.getNodeParameter('startTime', itemIndex),
           endTime: this.getNodeParameter('endTime', itemIndex),
@@ -893,9 +901,9 @@ class GestorClientesMax {
       default:
         throw new NodeOperationError(this.getNode(), `Unknown appointment operation: ${operation}`);
     }
-  }
+}
 
-  async handleFinancialOperations(operation, itemIndex, credentials) {
+async function handleFinancialOperations(this: IExecuteFunctions, operation: string, itemIndex: number, credentials: any) {
     const baseUrl = credentials.baseUrl;
     const apiKey = credentials.apiKey;
 
@@ -955,11 +963,12 @@ class GestorClientesMax {
 
 
       case 'create': {
-        const createData = {
+        const dueDateParam = this.getNodeParameter('dueDate', itemIndex) as string;
+        const createData: any = {
           type: this.getNodeParameter('financialType', itemIndex),
           description: this.getNodeParameter('financialDescription', itemIndex),
           amount: this.getNodeParameter('financialAmount', itemIndex),
-          dueDate: this.getNodeParameter('dueDate', itemIndex).split('T')[0], // Convert to date only
+          dueDate: dueDateParam?.split('T')[0] || dueDateParam, // Convert to date only
           category: this.getNodeParameter('financialCategory', itemIndex),
           status: this.getNodeParameter('financialStatus', itemIndex),
         };
@@ -990,11 +999,12 @@ class GestorClientesMax {
 
       case 'update': {
         const updateFinancialId = this.getNodeParameter('financialId', itemIndex);
-        const updateData = {
+        const updateDueDateParam = this.getNodeParameter('dueDate', itemIndex) as string;
+        const updateData: any = {
           type: this.getNodeParameter('financialType', itemIndex),
           description: this.getNodeParameter('financialDescription', itemIndex),
           amount: this.getNodeParameter('financialAmount', itemIndex),
-          dueDate: this.getNodeParameter('dueDate', itemIndex).split('T')[0], // Convert to date only
+          dueDate: updateDueDateParam?.split('T')[0] || updateDueDateParam, // Convert to date only
           category: this.getNodeParameter('financialCategory', itemIndex),
           status: this.getNodeParameter('financialStatus', itemIndex),
         };
@@ -1037,7 +1047,5 @@ class GestorClientesMax {
       default:
         throw new NodeOperationError(this.getNode(), `Unknown financial operation: ${operation}`);
     }
-  }
 }
 
-module.exports = GestorClientesMax;

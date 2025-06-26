@@ -1,22 +1,13 @@
 module.exports = {
-  root: true,
+  parser: '@typescript-eslint/parser',
   env: {
     node: true,
-    es2022: true,
   },
-  extends: [
-    'eslint:recommended',
-  ],
   parserOptions: {
-    ecmaVersion: 2022,
-    sourceType: 'commonjs',
+    ecmaVersion: 2020,
+    sourceType: 'module',
   },
   rules: {
-    // Basic ESLint rules for JavaScript
-    'no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
-    'no-console': 'warn',
-    'no-debugger': 'error',
-    'prefer-const': 'error',
-    'no-var': 'error',
+    'no-console': 'off',
   },
 };

@@ -1,12 +1,14 @@
 {
   "name": "@devanthonymax/n8n-nodes-gestorclientes",
-  "version": "0.3.7",
+  "version": "0.5.0",
   "description": "N8n community nodes collection - agenda API integration and utilities",
   "main": "index.js",
   "scripts": {
-    "publish:check": "npm pack --dry-run",
-    "lint": "eslint nodes credentials index.js",
-    "lint:fix": "eslint nodes credentials index.js --fix"
+    "build": "tsc && cp nodes/**/*.svg dist/nodes/",
+    "dev": "tsc --watch",
+    "lint": "eslint nodes/**/*.ts credentials/**/*.ts package.json",
+    "lint:fix": "eslint nodes/**/*.ts credentials/**/*.ts package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint"
   },
   "keywords": [
     "n8n-community-node-package",
@@ -27,18 +29,18 @@
     "n8n-workflow": "*"
   },
   "files": [
-    "nodes/**/*",
-    "credentials/**/*",
-    "index.js",
-    "README.md"
+    "dist"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "nodes": [
-      "nodes/GestorClientesMax/GestorClientesMax.node.js"
+      "dist/nodes/GestorClientesMax/GestorClientesMax.node.js",
+      "dist/nodes/GestorClientesMax/GestorClientesMaxCliente.node.js",
+      "dist/nodes/GestorClientesMax/GestorClientesMaxAgendamento.node.js",
+      "dist/nodes/GestorClientesMax/GestorClientesMaxFinancas.node.js"
     ],
     "credentials": [
-      "credentials/GestorClientesMaxApi.credentials.js"
+      "dist/credentials/GestorClientesMaxApi.credentials.js"
     ]
   },
   "repository": {
@@ -49,19 +51,12 @@
     "url": "https://github.com/anthonydaros/n8n-nodes-gestorclientes/issues"
   },
   "homepage": "https://github.com/anthonydaros/n8n-nodes-gestorclientes#readme",
-  "dependencies": {
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.0",
-    "n8n-core": "^1.14.1",
-    "n8n-workflow": "^1.82.0",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.6.0",
-    "ts-jest": "^29.4.0",
-    "typescript": "^5.8.3"
-  },
   "devDependencies": {
-    "jest": "^30.0.2"
+    "@typescript-eslint/parser": "~8.32.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "prettier": "^3.6.0",
+    "typescript": "^5.8.3"
   },
   "type": "commonjs"
 }

@@ -1,8 +1,13 @@
-class GestorClientesMaxApi {
+import type {
+  ICredentialType,
+  INodeProperties,
+} from 'n8n-workflow';
+
+export class GestorClientesMaxApi implements ICredentialType {
   name = 'gestorClientesMaxApi';
   displayName = 'Gestor Clientes Max API';
   documentationUrl = 'https://agenda.anthonymax.com/api/docs/';
-  properties = [
+  properties: INodeProperties[] = [
       {
         displayName: 'API Key',
         name: 'apiKey',
@@ -25,4 +30,3 @@ class GestorClientesMaxApi {
     ];
 }
 
-module.exports = GestorClientesMaxApi;
