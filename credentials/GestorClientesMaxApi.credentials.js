@@ -2,7 +2,7 @@ class GestorClientesMaxApi {
   constructor() {
     this.name = 'gestorClientesMaxApi';
     this.displayName = 'Gestor Clientes Max API';
-    this.documentationUrl = 'https://agenda.anthonymax.com/api/docs/';
+    this.documentationUrl = '';
     this.properties = [
       {
         displayName: 'API Key',
@@ -19,7 +19,7 @@ class GestorClientesMaxApi {
         displayName: 'Base URL',
         name: 'baseUrl',
         type: 'string',
-        default: 'https://agenda.anthonymax.com/api',
+        default: '',
         required: true,
         description: 'Base URL for the API',
       },
