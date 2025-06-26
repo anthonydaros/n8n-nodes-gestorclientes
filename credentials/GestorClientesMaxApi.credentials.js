@@ -1,7 +1,7 @@
 class GestorClientesMaxApi {
   name = 'gestorClientesMaxApi';
   displayName = 'Gestor Clientes Max API';
-  documentationUrl = '';
+  documentationUrl = 'https://agenda.anthonymax.com/api/docs/';
   properties = [
       {
         displayName: 'API Key',
@@ -18,7 +18,7 @@ class GestorClientesMaxApi {
         displayName: 'Base URL',
         name: 'baseUrl',
         type: 'string',
-        default: '',
+        default: 'https://agenda.anthonymax.com/api',
         required: true,
         description: 'Base URL for the API',
       },
