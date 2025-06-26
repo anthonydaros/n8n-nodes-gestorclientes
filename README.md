@@ -44,24 +44,6 @@ Install the community node package in your n8n instance:
 - **Get Summary**: Retrieve financial summary with totals and status breakdown
 - **Get Overdue**: Retrieve accounts that are overdue
 
-## Setup
-
-1. Install the community package in your n8n instance
-2. Create credentials for "Gestor Clientes Max API":
-   - **API Key**: Your API key (format: gck_xxxxxxxxxxxx)
-   - **Base URL**: https://agenda.anthonymax.com/api (default)
-3. Add the node to your workflow and select your credentials
-4. Choose resource (Client/Appointment/Financial) and operation (Create/Read/Update/Delete)
-
-## API Integration
-
-This node integrates with the Agenda API at `https://agenda.anthonymax.com/api` providing:
-- RESTful API endpoints for clients, appointments, and financial accounts
-- Bearer token authentication  
-- JSON request/response format
-- Full CRUD operations support
-- Advanced financial reporting (summary, overdue accounts)
-
 ## License
 
 MIT
