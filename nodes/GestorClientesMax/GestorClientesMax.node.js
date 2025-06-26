@@ -1040,6 +1040,4 @@ class GestorClientesMax {
   }
 }
 
-module.exports = {
-  GestorClientesMax
-};
+module.exports = GestorClientesMax;

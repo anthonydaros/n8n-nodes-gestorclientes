@@ -25,4 +25,4 @@ class GestorClientesMaxApi {
     ];
 }
 
-module.exports = { GestorClientesMaxApi };
+module.exports = GestorClientesMaxApi;
