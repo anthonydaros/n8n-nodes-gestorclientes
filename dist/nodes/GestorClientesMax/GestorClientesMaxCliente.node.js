@@ -11,7 +11,7 @@ class GestorClientesMaxCliente {
             group: ['transform'],
             version: 1,
             subtitle: '={{$parameter.operation}}',
-            description: 'Operações CRUD para clientes via API de agenda',
+            description: 'Gerenciar clientes: criar, buscar, atualizar e deletar clientes via API. Use para operações relacionadas a cadastro de clientes.',
             defaults: {
                 name: 'Gestor Clientes Max - Cliente',
             },
@@ -27,6 +27,7 @@ class GestorClientesMaxCliente {
                     type: "main" /* NodeConnectionType.Main */,
                 },
             ],
+            usableAsTool: true,
             credentials: [
                 {
                     name: 'gestorClientesMaxApi',

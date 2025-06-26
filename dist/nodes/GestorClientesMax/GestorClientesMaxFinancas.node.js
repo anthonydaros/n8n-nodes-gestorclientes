@@ -11,7 +11,7 @@ class GestorClientesMaxFinancas {
             group: ['transform'],
             version: 1,
             subtitle: '={{$parameter.operation}}',
-            description: 'Operações CRUD para finanças via API de agenda',
+            description: 'Gerenciar finanças: criar, buscar, atualizar contas financeiras, obter resumos e contas em atraso via API. Use para controle financeiro.',
             defaults: {
                 name: 'Gestor Clientes Max - Finanças',
             },
@@ -27,6 +27,7 @@ class GestorClientesMaxFinancas {
                     type: "main" /* NodeConnectionType.Main */,
                 },
             ],
+            usableAsTool: true,
             credentials: [
                 {
                     name: 'gestorClientesMaxApi',

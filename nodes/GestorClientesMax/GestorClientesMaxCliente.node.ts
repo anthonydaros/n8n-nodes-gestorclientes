@@ -14,7 +14,7 @@ export class GestorClientesMaxCliente implements INodeType {
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter.operation}}',
-    description: 'Operações CRUD para clientes via API de agenda',
+    description: 'Gerenciar clientes: criar, buscar, atualizar e deletar clientes via API. Use para operações relacionadas a cadastro de clientes.',
     defaults: {
       name: 'Gestor Clientes Max - Cliente',
     },
@@ -30,6 +30,7 @@ export class GestorClientesMaxCliente implements INodeType {
         type: NodeConnectionType.Main,
       },
     ],
+    usableAsTool: true,
     credentials: [
       {
         name: 'gestorClientesMaxApi',

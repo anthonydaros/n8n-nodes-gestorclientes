@@ -14,7 +14,7 @@ export class GestorClientesMaxAgendamento implements INodeType {
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter.operation}}',
-    description: 'Operações CRUD para agendamentos via API de agenda',
+    description: 'Gerenciar agendamentos: criar, buscar, atualizar e deletar agendamentos via API. Use para operações de scheduling e consultas.',
     defaults: {
       name: 'Gestor Clientes Max - Agendamento',
     },
@@ -30,6 +30,7 @@ export class GestorClientesMaxAgendamento implements INodeType {
         type: NodeConnectionType.Main,
       },
     ],
+    usableAsTool: true,
     credentials: [
       {
         name: 'gestorClientesMaxApi',
