@@ -1,6 +1,6 @@
 {
   "name": "@devanthonymax/n8n-nodes-gestorclientes",
-  "version": "0.1.6",
+  "version": "0.3.0",
   "description": "N8n community nodes collection - agenda API integration and utilities",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,9 @@
     "nodes": [
       "nodes/GestorClientesMax/GestorClientesMax.node.js"
     ],
-    "credentials": []
+    "credentials": [
+      "credentials/GestorClientesMaxApi.credentials.js"
+    ]
   },
   "repository": {
     "type": "git",

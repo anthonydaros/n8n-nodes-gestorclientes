@@ -2,5 +2,7 @@ module.exports = {
   nodes: [
     'nodes/GestorClientesMax/GestorClientesMax.node.js'
   ],
-  credentials: []
+  credentials: [
+    'credentials/GestorClientesMaxApi.credentials.js'
+  ]
 }; 
