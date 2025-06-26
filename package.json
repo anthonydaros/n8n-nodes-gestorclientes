@@ -1,10 +1,12 @@
 {
   "name": "@devanthonymax/n8n-nodes-gestorclientes",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "N8n community nodes collection - agenda API integration and utilities",
   "main": "index.js",
   "scripts": {
-    "publish:check": "npm pack --dry-run"
+    "publish:check": "npm pack --dry-run",
+    "lint": "eslint nodes credentials index.js",
+    "lint:fix": "eslint nodes credentials index.js --fix"
   },
   "keywords": [
     "n8n-community-node-package",
@@ -31,6 +33,7 @@
     "README.md"
   ],
   "n8n": {
+    "n8nNodesApiVersion": 1,
     "nodes": [
       "nodes/GestorClientesMax/GestorClientesMax.node.js"
     ],
@@ -45,5 +48,20 @@
   "bugs": {
     "url": "https://github.com/anthonydaros/n8n-nodes-gestorclientes/issues"
   },
-  "homepage": "https://github.com/anthonydaros/n8n-nodes-gestorclientes#readme"
+  "homepage": "https://github.com/anthonydaros/n8n-nodes-gestorclientes#readme",
+  "dependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.0",
+    "n8n-core": "^1.14.1",
+    "n8n-workflow": "^1.82.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.0",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "jest": "^30.0.2"
+  },
+  "type": "commonjs"
 }

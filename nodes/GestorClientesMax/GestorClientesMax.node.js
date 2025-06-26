@@ -697,7 +697,7 @@ class GestorClientesMax {
     };
 
     switch (operation) {
-      case 'getAll':
+      case 'getAll': {
         return await this.helpers.httpRequest({
           method: 'GET',
           url: `${baseUrl}/clients`,
@@ -705,7 +705,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'get':
+      }
+
+
+
+      case 'get': {
         const clientId = this.getNodeParameter('clientId', itemIndex);
         return await this.helpers.httpRequest({
           method: 'GET',
@@ -714,7 +718,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'create':
+      }
+
+
+
+      case 'create': {
         const createData = {
           name: this.getNodeParameter('name', itemIndex),
           email: this.getNodeParameter('email', itemIndex),
@@ -732,7 +740,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'update':
+      }
+
+
+
+      case 'update': {
         const updateClientId = this.getNodeParameter('clientId', itemIndex);
         const updateData = {
           name: this.getNodeParameter('name', itemIndex),
@@ -751,14 +763,20 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'delete':
+      }
+
+
+
+      case 'delete': {
         const deleteClientId = this.getNodeParameter('clientId', itemIndex);
         return await this.helpers.httpRequest({
           method: 'DELETE',
           url: `${baseUrl}/clients/${deleteClientId}`,
           headers,
           json: true,
-        });
+        });      }
+
+
 
       default:
         throw new NodeOperationError(this.getNode(), `Unknown client operation: ${operation}`);
@@ -775,7 +793,7 @@ class GestorClientesMax {
     };
 
     switch (operation) {
-      case 'getAll':
+      case 'getAll': {
         return await this.helpers.httpRequest({
           method: 'GET',
           url: `${baseUrl}/appointments`,
@@ -783,7 +801,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'get':
+      }
+
+
+
+      case 'get': {
         const appointmentId = this.getNodeParameter('appointmentId', itemIndex);
         return await this.helpers.httpRequest({
           method: 'GET',
@@ -792,7 +814,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'create':
+      }
+
+
+
+      case 'create': {
         const createData = {
           title: this.getNodeParameter('title', itemIndex),
           startTime: this.getNodeParameter('startTime', itemIndex),
@@ -818,7 +844,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'update':
+      }
+
+
+
+      case 'update': {
         const updateAppointmentId = this.getNodeParameter('appointmentId', itemIndex);
         const updateData = {
           title: this.getNodeParameter('title', itemIndex),
@@ -845,14 +875,20 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'delete':
+      }
+
+
+
+      case 'delete': {
         const deleteAppointmentId = this.getNodeParameter('appointmentId', itemIndex);
         return await this.helpers.httpRequest({
           method: 'DELETE',
           url: `${baseUrl}/appointments/${deleteAppointmentId}`,
           headers,
           json: true,
-        });
+        });      }
+
+
 
       default:
         throw new NodeOperationError(this.getNode(), `Unknown appointment operation: ${operation}`);
@@ -869,7 +905,7 @@ class GestorClientesMax {
     };
 
     switch (operation) {
-      case 'getAll':
+      case 'getAll': {
         return await this.helpers.httpRequest({
           method: 'GET',
           url: `${baseUrl}/financial-accounts`,
@@ -877,7 +913,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'get':
+      }
+
+
+
+      case 'get': {
         const financialId = this.getNodeParameter('financialId', itemIndex);
         return await this.helpers.httpRequest({
           method: 'GET',
@@ -886,7 +926,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'getSummary':
+      }
+
+
+
+      case 'getSummary': {
         return await this.helpers.httpRequest({
           method: 'GET',
           url: `${baseUrl}/financial-accounts/summary`,
@@ -894,7 +938,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'getOverdue':
+      }
+
+
+
+      case 'getOverdue': {
         return await this.helpers.httpRequest({
           method: 'GET',
           url: `${baseUrl}/financial-accounts/overdue`,
@@ -902,7 +950,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'create':
+      }
+
+
+
+      case 'create': {
         const createData = {
           type: this.getNodeParameter('financialType', itemIndex),
           description: this.getNodeParameter('financialDescription', itemIndex),
@@ -932,7 +984,11 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'update':
+      }
+
+
+
+      case 'update': {
         const updateFinancialId = this.getNodeParameter('financialId', itemIndex);
         const updateData = {
           type: this.getNodeParameter('financialType', itemIndex),
@@ -963,14 +1019,20 @@ class GestorClientesMax {
           json: true,
         });
 
-      case 'delete':
+      }
+
+
+
+      case 'delete': {
         const deleteFinancialId = this.getNodeParameter('financialId', itemIndex);
         return await this.helpers.httpRequest({
           method: 'DELETE',
           url: `${baseUrl}/financial-accounts/${deleteFinancialId}`,
           headers,
           json: true,
-        });
+        });      }
+
+
 
       default:
         throw new NodeOperationError(this.getNode(), `Unknown financial operation: ${operation}`);
@@ -978,4 +1040,6 @@ class GestorClientesMax {
   }
 }
 
-module.exports = { GestorClientesMax };
+module.exports = {
+  GestorClientesMax
+};

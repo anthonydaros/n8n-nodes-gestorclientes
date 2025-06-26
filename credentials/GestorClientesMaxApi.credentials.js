@@ -1,9 +1,8 @@
 class GestorClientesMaxApi {
-  constructor() {
-    this.name = 'gestorClientesMaxApi';
-    this.displayName = 'Gestor Clientes Max API';
-    this.documentationUrl = '';
-    this.properties = [
+  name = 'gestorClientesMaxApi';
+  displayName = 'Gestor Clientes Max API';
+  documentationUrl = '';
+  properties = [
       {
         displayName: 'API Key',
         name: 'apiKey',
@@ -24,7 +23,6 @@ class GestorClientesMaxApi {
         description: 'Base URL for the API',
       },
     ];
-  }
 }
 
 module.exports = { GestorClientesMaxApi };
