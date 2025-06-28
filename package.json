@@ -1,6 +1,6 @@
 {
   "name": "@devanthonymax/n8n-nodes-gestorclientes",
-  "version": "0.7.0",
+  "version": "0.7.3",
   "description": "N8n community nodes collection - agenda API integration and utilities",
   "main": "index.js",
   "scripts": {

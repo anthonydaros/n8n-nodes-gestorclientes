@@ -5,17 +5,16 @@ const n8n_workflow_1 = require("n8n-workflow");
 class GestorClientesMaxUsers {
     constructor() {
         this.description = {
-            displayName: 'Gestor Clientes Max - Users',
-            name: 'gestorClientesMaxUsers',
+            displayName: 'Gestor Clientes Max - Users v2',
+            name: 'gestorClientesMaxUsersV2',
             icon: 'file:gestorclientes.svg',
             group: ['transform'],
             version: 1,
             subtitle: '={{$parameter.operation}}',
-            description: 'Operações completas de CRUD para usuários, clientes, agendamentos e finanças da API de agenda com suporte a userId',
+            description: 'Operações de usuários, clientes, agendamentos e finanças com suporte a userId para Super Admin via API',
             defaults: {
                 name: 'Gestor Clientes Max - Users',
             },
-            usableAsTool: true,
             inputs: [
                 {
                     displayName: '',
@@ -28,6 +27,7 @@ class GestorClientesMaxUsers {
                     type: "main" /* NodeConnectionType.Main */,
                 },
             ],
+            usableAsTool: true,
             credentials: [
                 {
                     name: 'gestorClientesMaxApi',
@@ -47,7 +47,6 @@ class GestorClientesMaxUsers {
                             description: 'Buscar todos os usuários públicos',
                             action: 'Buscar todos os usuários públicos',
                         },
-                        // Operações de Clientes
                         {
                             name: 'Get All Clients',
                             value: 'getAllClients',
@@ -60,7 +59,6 @@ class GestorClientesMaxUsers {
                             description: 'Criar novo cliente (com suporte a userId)',
                             action: 'Criar cliente',
                         },
-                        // Operações de Agendamentos
                         {
                             name: 'Get All Appointments',
                             value: 'getAllAppointments',
@@ -79,7 +77,6 @@ class GestorClientesMaxUsers {
                             description: 'Atualizar agendamento completo',
                             action: 'Atualizar agendamento',
                         },
-                        // Operações Financeiras
                         {
                             name: 'Get All Financial',
                             value: 'getAllFinancial',
@@ -167,83 +164,6 @@ class GestorClientesMaxUsers {
                     default: '',
                     description: 'Telefone do cliente',
                 },
-                {
-                    displayName: 'Client CPF',
-                    name: 'clientCpf',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createClient'],
-                        },
-                    },
-                    default: '',
-                    description: 'CPF do cliente',
-                },
-                {
-                    displayName: 'Birth Date',
-                    name: 'birthDate',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createClient'],
-                        },
-                    },
-                    default: '',
-                    description: 'Data de nascimento (YYYY-MM-DD)',
-                },
-                {
-                    displayName: 'Address',
-                    name: 'address',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createClient'],
-                        },
-                    },
-                    default: '',
-                    description: 'Endereço do cliente',
-                },
-                {
-                    displayName: 'Consultation Price',
-                    name: 'consultationPrice',
-                    type: 'number',
-                    displayOptions: {
-                        show: {
-                            operation: ['createClient'],
-                        },
-                    },
-                    default: 0,
-                    description: 'Preço da consulta',
-                },
-                {
-                    displayName: 'Payment Status',
-                    name: 'paymentStatus',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            operation: ['createClient'],
-                        },
-                    },
-                    options: [
-                        { name: 'A Pagar', value: 'a_pagar' },
-                        { name: 'Pago', value: 'pago' },
-                        { name: 'Pendente', value: 'pendente' },
-                    ],
-                    default: 'a_pagar',
-                    description: 'Status de pagamento',
-                },
-                {
-                    displayName: 'Notes',
-                    name: 'clientNotes',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createClient'],
-                        },
-                    },
-                    default: '',
-                    description: 'Observações sobre o cliente',
-                },
                 // Parâmetros para agendamentos
                 {
                     displayName: 'Start Date',
@@ -297,18 +217,6 @@ class GestorClientesMaxUsers {
                     description: 'Título do agendamento',
                 },
                 {
-                    displayName: 'Description',
-                    name: 'appointmentDescription',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    default: '',
-                    description: 'Descrição do agendamento',
-                },
-                {
                     displayName: 'Start Time',
                     name: 'startTime',
                     type: 'string',
@@ -333,89 +241,6 @@ class GestorClientesMaxUsers {
                     default: '',
                     required: true,
                     description: 'Horário de fim (ISO 8601: 2024-01-15T15:00:00Z)',
-                },
-                {
-                    displayName: 'Client ID',
-                    name: 'clientId',
-                    type: 'number',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    default: '',
-                    description: 'ID do cliente',
-                },
-                {
-                    displayName: 'Appointment Consultation Price',
-                    name: 'appointmentConsultationPrice',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    default: '',
-                    description: 'Preço da consulta (ex: "150.00")',
-                },
-                {
-                    displayName: 'Appointment Status',
-                    name: 'appointmentStatus',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    options: [
-                        { name: 'Agendado', value: 'agendado' },
-                        { name: 'Concluído', value: 'concluido' },
-                        { name: 'Cancelado', value: 'cancelado' },
-                    ],
-                    default: 'agendado',
-                    description: 'Status do agendamento',
-                },
-                {
-                    displayName: 'Is Paid',
-                    name: 'isPaid',
-                    type: 'boolean',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    default: false,
-                    description: 'Se o agendamento foi pago',
-                },
-                {
-                    displayName: 'Payment Method',
-                    name: 'paymentMethod',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    options: [
-                        { name: 'Cartão', value: 'cartao' },
-                        { name: 'PIX', value: 'pix' },
-                        { name: 'Dinheiro', value: 'dinheiro' },
-                        { name: 'Transferência', value: 'transferencia' },
-                    ],
-                    default: 'cartao',
-                    description: 'Método de pagamento',
-                },
-                {
-                    displayName: 'Payment Date',
-                    name: 'paymentDate',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createAppointment', 'updateAppointment'],
-                        },
-                    },
-                    default: '',
-                    description: 'Data do pagamento (ISO 8601: 2024-02-15T11:00:00Z)',
                 },
                 // Parâmetros para finanças
                 {
@@ -492,137 +317,6 @@ class GestorClientesMaxUsers {
                     required: true,
                     description: 'Data de vencimento (YYYY-MM-DD)',
                 },
-                {
-                    displayName: 'Paid Date',
-                    name: 'paidDate',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: '',
-                    description: 'Data de pagamento (YYYY-MM-DD)',
-                },
-                {
-                    displayName: 'Financial Is Paid',
-                    name: 'financialIsPaid',
-                    type: 'boolean',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: false,
-                    description: 'Se a conta foi paga',
-                },
-                {
-                    displayName: 'Financial Payment Method',
-                    name: 'financialPaymentMethod',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: '',
-                    description: 'Método de pagamento',
-                },
-                {
-                    displayName: 'Category',
-                    name: 'category',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: '',
-                    description: 'Categoria da conta',
-                },
-                {
-                    displayName: 'Financial Client ID',
-                    name: 'financialClientId',
-                    type: 'number',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: '',
-                    description: 'ID do cliente relacionado',
-                },
-                {
-                    displayName: 'Financial Appointment ID',
-                    name: 'financialAppointmentId',
-                    type: 'number',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: '',
-                    description: 'ID do agendamento relacionado',
-                },
-                {
-                    displayName: 'Financial Notes',
-                    name: 'financialNotes',
-                    type: 'string',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: '',
-                    description: 'Observações da conta financeira',
-                },
-                {
-                    displayName: 'Recurring',
-                    name: 'recurring',
-                    type: 'boolean',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    default: false,
-                    description: 'Se é uma conta recorrente',
-                },
-                {
-                    displayName: 'Recurring Period',
-                    name: 'recurringPeriod',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                            recurring: [true],
-                        },
-                    },
-                    options: [
-                        { name: 'Mensal', value: 'monthly' },
-                        { name: 'Anual', value: 'yearly' },
-                        { name: 'Semanal', value: 'weekly' },
-                    ],
-                    default: 'monthly',
-                    description: 'Período de recorrência',
-                },
-                {
-                    displayName: 'Financial Status',
-                    name: 'financialStatus',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            operation: ['createFinancial'],
-                        },
-                    },
-                    options: [
-                        { name: 'Pendente', value: 'pending' },
-                        { name: 'Pago', value: 'paid' },
-                        { name: 'Vencido', value: 'overdue' },
-                    ],
-                    default: 'pending',
-                    description: 'Status da conta financeira',
-                },
             ],
         };
     }
@@ -634,7 +328,7 @@ class GestorClientesMaxUsers {
             try {
                 const operation = this.getNodeParameter('operation', i);
                 let responseData;
-                responseData = await handleOperations.call(this, operation, i, credentials);
+                responseData = await handleUsersOperations.call(this, operation, i, credentials);
                 if (!responseData) {
                     throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
                 }
@@ -664,7 +358,7 @@ class GestorClientesMaxUsers {
     }
 }
 exports.GestorClientesMaxUsers = GestorClientesMaxUsers;
-async function handleOperations(operation, itemIndex, credentials) {
+async function handleUsersOperations(operation, itemIndex, credentials) {
     const baseUrl = credentials.baseUrl;
     const apiKey = credentials.apiKey;
     const headers = {
@@ -707,31 +401,12 @@ async function handleOperations(operation, itemIndex, credentials) {
             };
             if (userId)
                 clientData.userId = userId;
-            // Campos opcionais
             const email = this.getNodeParameter('clientEmail', itemIndex);
             const phone = this.getNodeParameter('clientPhone', itemIndex);
-            const cpf = this.getNodeParameter('clientCpf', itemIndex);
-            const birthDate = this.getNodeParameter('birthDate', itemIndex);
-            const address = this.getNodeParameter('address', itemIndex);
-            const consultationPrice = this.getNodeParameter('consultationPrice', itemIndex);
-            const paymentStatus = this.getNodeParameter('paymentStatus', itemIndex);
-            const notes = this.getNodeParameter('clientNotes', itemIndex);
             if (email)
                 clientData.email = email;
             if (phone)
                 clientData.phone = phone;
-            if (cpf)
-                clientData.cpf = cpf;
-            if (birthDate)
-                clientData.birthDate = birthDate;
-            if (address)
-                clientData.address = address;
-            if (consultationPrice)
-                clientData.consultationPrice = consultationPrice;
-            if (paymentStatus)
-                clientData.paymentStatus = paymentStatus;
-            if (notes)
-                clientData.notes = notes;
             return await this.helpers.httpRequest({
                 method: 'POST',
                 url: `${baseUrl}/clients`,
@@ -772,28 +447,6 @@ async function handleOperations(operation, itemIndex, credentials) {
             };
             if (userId)
                 appointmentData.userId = userId;
-            // Campos opcionais
-            const description = this.getNodeParameter('appointmentDescription', itemIndex);
-            const clientId = this.getNodeParameter('clientId', itemIndex);
-            const consultationPrice = this.getNodeParameter('appointmentConsultationPrice', itemIndex);
-            const status = this.getNodeParameter('appointmentStatus', itemIndex);
-            const isPaid = this.getNodeParameter('isPaid', itemIndex);
-            const paymentMethod = this.getNodeParameter('paymentMethod', itemIndex);
-            const paymentDate = this.getNodeParameter('paymentDate', itemIndex);
-            if (description)
-                appointmentData.description = description;
-            if (clientId)
-                appointmentData.clientId = clientId;
-            if (consultationPrice)
-                appointmentData.consultationPrice = consultationPrice;
-            if (status)
-                appointmentData.status = status;
-            if (isPaid !== undefined)
-                appointmentData.isPaid = isPaid;
-            if (paymentMethod)
-                appointmentData.paymentMethod = paymentMethod;
-            if (paymentDate)
-                appointmentData.paymentDate = paymentDate;
             return await this.helpers.httpRequest({
                 method: 'POST',
                 url: `${baseUrl}/appointments`,
@@ -809,28 +462,6 @@ async function handleOperations(operation, itemIndex, credentials) {
                 startTime: this.getNodeParameter('startTime', itemIndex),
                 endTime: this.getNodeParameter('endTime', itemIndex),
             };
-            // Campos opcionais
-            const description = this.getNodeParameter('appointmentDescription', itemIndex);
-            const clientId = this.getNodeParameter('clientId', itemIndex);
-            const consultationPrice = this.getNodeParameter('appointmentConsultationPrice', itemIndex);
-            const status = this.getNodeParameter('appointmentStatus', itemIndex);
-            const isPaid = this.getNodeParameter('isPaid', itemIndex);
-            const paymentMethod = this.getNodeParameter('paymentMethod', itemIndex);
-            const paymentDate = this.getNodeParameter('paymentDate', itemIndex);
-            if (description)
-                updateData.description = description;
-            if (clientId)
-                updateData.clientId = clientId;
-            if (consultationPrice)
-                updateData.consultationPrice = consultationPrice;
-            if (status)
-                updateData.status = status;
-            if (isPaid !== undefined)
-                updateData.isPaid = isPaid;
-            if (paymentMethod)
-                updateData.paymentMethod = paymentMethod;
-            if (paymentDate)
-                updateData.paymentDate = paymentDate;
             return await this.helpers.httpRequest({
                 method: 'PUT',
                 url: `${baseUrl}/appointments/${appointmentId}`,
@@ -869,37 +500,6 @@ async function handleOperations(operation, itemIndex, credentials) {
             };
             if (userId)
                 financialData.userId = userId;
-            // Campos opcionais
-            const paidDate = this.getNodeParameter('paidDate', itemIndex);
-            const isPaid = this.getNodeParameter('financialIsPaid', itemIndex);
-            const paymentMethod = this.getNodeParameter('financialPaymentMethod', itemIndex);
-            const category = this.getNodeParameter('category', itemIndex);
-            const clientId = this.getNodeParameter('financialClientId', itemIndex);
-            const appointmentId = this.getNodeParameter('financialAppointmentId', itemIndex);
-            const notes = this.getNodeParameter('financialNotes', itemIndex);
-            const recurring = this.getNodeParameter('recurring', itemIndex);
-            const recurringPeriod = this.getNodeParameter('recurringPeriod', itemIndex);
-            const status = this.getNodeParameter('financialStatus', itemIndex);
-            if (paidDate)
-                financialData.paidDate = paidDate;
-            if (isPaid !== undefined)
-                financialData.isPaid = isPaid;
-            if (paymentMethod)
-                financialData.paymentMethod = paymentMethod;
-            if (category)
-                financialData.category = category;
-            if (clientId)
-                financialData.clientId = clientId;
-            if (appointmentId)
-                financialData.appointmentId = appointmentId;
-            if (notes)
-                financialData.notes = notes;
-            if (recurring !== undefined)
-                financialData.recurring = recurring;
-            if (recurringPeriod)
-                financialData.recurringPeriod = recurringPeriod;
-            if (status)
-                financialData.status = status;
             return await this.helpers.httpRequest({
                 method: 'POST',
                 url: `${baseUrl}/financial`,
@@ -909,7 +509,7 @@ async function handleOperations(operation, itemIndex, credentials) {
             });
         }
         default:
-            throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+            throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown users operation: ${operation}`);
     }
 }
 //# sourceMappingURL=GestorClientesMaxUsers.node.js.map
