@@ -37,7 +37,8 @@
       "dist/nodes/GestorClientesMax/GestorClientesMax.node.js",
       "dist/nodes/GestorClientesMax/GestorClientesMaxCliente.node.js",
       "dist/nodes/GestorClientesMax/GestorClientesMaxAgendamento.node.js",
-      "dist/nodes/GestorClientesMax/GestorClientesMaxFinancas.node.js"
+      "dist/nodes/GestorClientesMax/GestorClientesMaxFinancas.node.js",
+      "dist/nodes/GestorClientesMax/GestorClientesMaxUsers.node.js"
     ],
     "credentials": [
       "dist/credentials/GestorClientesMaxApi.credentials.js"

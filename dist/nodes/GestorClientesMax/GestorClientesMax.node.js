@@ -52,10 +52,6 @@ class GestorClientesMax {
                             name: 'Finanças',
                             value: 'financial',
                         },
-                        {
-                            name: 'Usuários',
-                            value: 'users',
-                        },
                     ],
                     default: 'client',
                 },
@@ -217,27 +213,6 @@ class GestorClientesMax {
                         },
                     ],
                     default: 'getAll',
-                },
-                // Users Operations
-                {
-                    displayName: 'Operation',
-                    name: 'operation',
-                    type: 'options',
-                    noDataExpression: true,
-                    displayOptions: {
-                        show: {
-                            resource: ['users'],
-                        },
-                    },
-                    options: [
-                        {
-                            name: 'Get All Public',
-                            value: 'getAllPublic',
-                            description: 'Buscar todos os usuários públicos',
-                            action: 'Buscar todos os usuários públicos',
-                        },
-                    ],
-                    default: 'getAllPublic',
                 },
                 // Client ID for get/update/delete operations
                 {
@@ -717,9 +692,6 @@ class GestorClientesMax {
                 else if (resource === 'financial') {
                     responseData = await handleFinancialOperations.call(this, operation, i, credentials);
                 }
-                else if (resource === 'users') {
-                    responseData = await handleUsersOperations.call(this, operation, i, credentials);
-                }
                 if (!responseData) {
                     throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown operation: ${resource}.${operation}`);
                 }
@@ -1043,26 +1015,6 @@ async function handleFinancialOperations(operation, itemIndex, credentials) {
         }
         default:
             throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown financial operation: ${operation}`);
-    }
-}
-async function handleUsersOperations(operation, itemIndex, credentials) {
-    const baseUrl = credentials.baseUrl;
-    const apiKey = credentials.apiKey;
-    const headers = {
-        'Authorization': `Bearer ${apiKey}`,
-        'Accept': 'application/json',
-    };
-    switch (operation) {
-        case 'getAllPublic': {
-            return await this.helpers.httpRequest({
-                method: 'GET',
-                url: `${baseUrl}/public/users`,
-                headers,
-                json: true,
-            });
-        }
-        default:
-            throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown users operation: ${operation}`);
     }
 }
 //# sourceMappingURL=GestorClientesMax.node.js.map
