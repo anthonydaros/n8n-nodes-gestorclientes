@@ -4,7 +4,6 @@ import { GestorClientesMax } from './nodes/GestorClientesMax/GestorClientesMax.n
 import { GestorClientesMaxCliente } from './nodes/GestorClientesMax/GestorClientesMaxCliente.node';
 import { GestorClientesMaxAgendamento } from './nodes/GestorClientesMax/GestorClientesMaxAgendamento.node';
 import { GestorClientesMaxFinancas } from './nodes/GestorClientesMax/GestorClientesMaxFinancas.node';
-import { GestorClientesMaxUsers } from './nodes/GestorClientesMax/GestorClientesMaxUsers.node';
 import { GestorClientesMaxApi } from './credentials/GestorClientesMaxApi.credentials';
 
 export const nodes: INodeType[] = [
@@ -12,7 +11,6 @@ export const nodes: INodeType[] = [
   new GestorClientesMaxCliente(),
   new GestorClientesMaxAgendamento(),
   new GestorClientesMaxFinancas(),
-  new GestorClientesMaxUsers(),
 ];
 
 export const credentials: ICredentialType[] = [

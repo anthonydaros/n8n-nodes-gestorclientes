@@ -93,6 +93,21 @@ export class GestorClientesMaxCliente implements INodeType {
         description: 'ID do cliente',
       },
 
+      // User ID - Required for create operation
+      {
+        displayName: 'User ID',
+        name: 'userId',
+        type: 'string',
+        displayOptions: {
+          show: {
+            operation: ['create', 'update'],
+          },
+        },
+        default: '',
+        required: true,
+        description: 'ID do usuário (obrigatório para Super Admin)',
+      },
+
       // Client Fields
       {
         displayName: 'Nome',
@@ -105,7 +120,7 @@ export class GestorClientesMaxCliente implements INodeType {
         },
         default: '',
         required: true,
-        description: 'Nome do cliente',
+        description: 'Nome do cliente (obrigatório)',
       },
       {
         displayName: 'Email',
@@ -117,7 +132,6 @@ export class GestorClientesMaxCliente implements INodeType {
           },
         },
         default: '',
-        required: true,
         description: 'Email do cliente',
       },
       {
@@ -130,7 +144,6 @@ export class GestorClientesMaxCliente implements INodeType {
           },
         },
         default: '',
-        required: true,
         description: 'Telefone do cliente',
       },
       {
@@ -144,6 +157,83 @@ export class GestorClientesMaxCliente implements INodeType {
         },
         default: '',
         description: 'CPF do cliente',
+      },
+      {
+        displayName: 'Data de Nascimento',
+        name: 'birthDate',
+        type: 'dateTime',
+        displayOptions: {
+          show: {
+            operation: ['create', 'update'],
+          },
+        },
+        default: '',
+        description: 'Data de nascimento do cliente (formato: YYYY-MM-DD)',
+      },
+      {
+        displayName: 'Endereço',
+        name: 'address',
+        type: 'string',
+        displayOptions: {
+          show: {
+            operation: ['create', 'update'],
+          },
+        },
+        default: '',
+        description: 'Endereço completo do cliente',
+      },
+      {
+        displayName: 'Preço da Consulta',
+        name: 'consultationPrice',
+        type: 'number',
+        displayOptions: {
+          show: {
+            operation: ['create', 'update'],
+          },
+        },
+        default: 0,
+        description: 'Preço da consulta em reais',
+      },
+      {
+        displayName: 'Status de Pagamento',
+        name: 'paymentStatus',
+        type: 'options',
+        displayOptions: {
+          show: {
+            operation: ['create', 'update'],
+          },
+        },
+        options: [
+          {
+            name: 'A Pagar',
+            value: 'a_pagar',
+          },
+          {
+            name: 'Pago',
+            value: 'pago',
+          },
+          {
+            name: 'Cancelado',
+            value: 'cancelado',
+          },
+        ],
+        default: 'a_pagar',
+        description: 'Status do pagamento',
+      },
+      {
+        displayName: 'Observações',
+        name: 'notes',
+        type: 'string',
+        typeOptions: {
+          rows: 3,
+        },
+        displayOptions: {
+          show: {
+            operation: ['create', 'update'],
+          },
+        },
+        default: '',
+        description: 'Observações sobre o cliente',
       },
     ],
   };
@@ -221,13 +311,38 @@ async function handleClientOperations(this: IExecuteFunctions, operation: string
 
     case 'create': {
       const createData: any = {
+        userId: this.getNodeParameter('userId', itemIndex),
         name: this.getNodeParameter('name', itemIndex),
-        email: this.getNodeParameter('email', itemIndex),
-        phone: this.getNodeParameter('phone', itemIndex),
       };
+      
+      // Campos opcionais
+      const email = this.getNodeParameter('email', itemIndex);
+      if (email) createData.email = email;
+      
+      const phone = this.getNodeParameter('phone', itemIndex);
+      if (phone) createData.phone = phone;
       
       const cpf = this.getNodeParameter('cpf', itemIndex);
       if (cpf) createData.cpf = cpf;
+      
+      const birthDate = this.getNodeParameter('birthDate', itemIndex) as string;
+      if (birthDate) {
+        // Converter para formato YYYY-MM-DD se necessário
+        const date = new Date(birthDate);
+        createData.birthDate = date.toISOString().split('T')[0];
+      }
+      
+      const address = this.getNodeParameter('address', itemIndex) as string;
+      if (address) createData.address = address;
+      
+      const consultationPrice = this.getNodeParameter('consultationPrice', itemIndex) as number;
+      if (consultationPrice && consultationPrice > 0) createData.consultationPrice = consultationPrice;
+      
+      const paymentStatus = this.getNodeParameter('paymentStatus', itemIndex);
+      if (paymentStatus) createData.paymentStatus = paymentStatus;
+      
+      const notes = this.getNodeParameter('notes', itemIndex);
+      if (notes) createData.notes = notes;
 
       return await this.helpers.httpRequest({
         method: 'POST',
@@ -241,13 +356,38 @@ async function handleClientOperations(this: IExecuteFunctions, operation: string
     case 'update': {
       const updateClientId = this.getNodeParameter('clientId', itemIndex);
       const updateData: any = {
+        userId: this.getNodeParameter('userId', itemIndex),
         name: this.getNodeParameter('name', itemIndex),
-        email: this.getNodeParameter('email', itemIndex),
-        phone: this.getNodeParameter('phone', itemIndex),
       };
       
-      const updateCpf = this.getNodeParameter('cpf', itemIndex);
-      if (updateCpf) updateData.cpf = updateCpf;
+      // Campos opcionais
+      const email = this.getNodeParameter('email', itemIndex);
+      if (email) updateData.email = email;
+      
+      const phone = this.getNodeParameter('phone', itemIndex);
+      if (phone) updateData.phone = phone;
+      
+      const cpf = this.getNodeParameter('cpf', itemIndex);
+      if (cpf) updateData.cpf = cpf;
+      
+      const birthDate = this.getNodeParameter('birthDate', itemIndex) as string;
+      if (birthDate) {
+        // Converter para formato YYYY-MM-DD se necessário
+        const date = new Date(birthDate);
+        updateData.birthDate = date.toISOString().split('T')[0];
+      }
+      
+      const address = this.getNodeParameter('address', itemIndex) as string;
+      if (address) updateData.address = address;
+      
+      const consultationPrice = this.getNodeParameter('consultationPrice', itemIndex) as number;
+      if (consultationPrice && consultationPrice > 0) updateData.consultationPrice = consultationPrice;
+      
+      const paymentStatus = this.getNodeParameter('paymentStatus', itemIndex);
+      if (paymentStatus) updateData.paymentStatus = paymentStatus;
+      
+      const notes = this.getNodeParameter('notes', itemIndex);
+      if (notes) updateData.notes = notes;
 
       return await this.helpers.httpRequest({
         method: 'PUT',
