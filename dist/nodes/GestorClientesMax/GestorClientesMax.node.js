@@ -52,6 +52,10 @@ class GestorClientesMax {
                             name: 'Finanças',
                             value: 'financial',
                         },
+                        {
+                            name: 'Usuários',
+                            value: 'users',
+                        },
                     ],
                     default: 'client',
                 },
@@ -97,6 +101,12 @@ class GestorClientesMax {
                             description: 'Deletar cliente',
                             action: 'Deletar cliente',
                         },
+                        {
+                            name: 'Search',
+                            value: 'search',
+                            description: 'Buscar clientes com filtros',
+                            action: 'Buscar clientes com filtros',
+                        },
                     ],
                     default: 'getAll',
                 },
@@ -141,6 +151,12 @@ class GestorClientesMax {
                             value: 'delete',
                             description: 'Deletar agendamento',
                             action: 'Deletar agendamento',
+                        },
+                        {
+                            name: 'Get By Client',
+                            value: 'getByClient',
+                            description: 'Buscar agendamentos por cliente',
+                            action: 'Buscar agendamentos por cliente',
                         },
                     ],
                     default: 'getAll',
@@ -202,6 +218,27 @@ class GestorClientesMax {
                     ],
                     default: 'getAll',
                 },
+                // Users Operations
+                {
+                    displayName: 'Operation',
+                    name: 'operation',
+                    type: 'options',
+                    noDataExpression: true,
+                    displayOptions: {
+                        show: {
+                            resource: ['users'],
+                        },
+                    },
+                    options: [
+                        {
+                            name: 'Get All Public',
+                            value: 'getAllPublic',
+                            description: 'Buscar todos os usuários públicos',
+                            action: 'Buscar todos os usuários públicos',
+                        },
+                    ],
+                    default: 'getAllPublic',
+                },
                 // Client ID for get/update/delete operations
                 {
                     displayName: 'Client ID',
@@ -216,6 +253,35 @@ class GestorClientesMax {
                     default: '',
                     required: true,
                     description: 'ID do cliente',
+                },
+                // Client ID for appointment getByClient operation
+                {
+                    displayName: 'Client ID',
+                    name: 'clientId',
+                    type: 'number',
+                    displayOptions: {
+                        show: {
+                            resource: ['appointment'],
+                            operation: ['getByClient'],
+                        },
+                    },
+                    default: '',
+                    required: true,
+                    description: 'ID do cliente para buscar agendamentos',
+                },
+                // Search parameters for client search
+                {
+                    displayName: 'Search Query',
+                    name: 'searchQuery',
+                    type: 'string',
+                    displayOptions: {
+                        show: {
+                            resource: ['client'],
+                            operation: ['search'],
+                        },
+                    },
+                    default: '',
+                    description: 'Termo de busca para pesquisar clientes (nome, email, telefone)',
                 },
                 // Appointment ID for get/update/delete operations
                 {
@@ -330,6 +396,7 @@ class GestorClientesMax {
                     },
                     default: '',
                     description: 'Descrição do agendamento',
+                    noDataExpression: false,
                 },
                 {
                     displayName: 'Data/Hora Início',
@@ -650,6 +717,9 @@ class GestorClientesMax {
                 else if (resource === 'financial') {
                     responseData = await handleFinancialOperations.call(this, operation, i, credentials);
                 }
+                else if (resource === 'users') {
+                    responseData = await handleUsersOperations.call(this, operation, i, credentials);
+                }
                 if (!responseData) {
                     throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown operation: ${resource}.${operation}`);
                 }
@@ -748,6 +818,16 @@ async function handleClientOperations(operation, itemIndex, credentials) {
                 json: true,
             });
         }
+        case 'search': {
+            const searchQuery = this.getNodeParameter('searchQuery', itemIndex);
+            const queryParams = searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : '';
+            return await this.helpers.httpRequest({
+                method: 'GET',
+                url: `${baseUrl}/clients/search${queryParams}`,
+                headers,
+                json: true,
+            });
+        }
         default:
             throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown client operation: ${operation}`);
     }
@@ -833,6 +913,15 @@ async function handleAppointmentOperations(operation, itemIndex, credentials) {
             return await this.helpers.httpRequest({
                 method: 'DELETE',
                 url: `${baseUrl}/appointments/${deleteAppointmentId}`,
+                headers,
+                json: true,
+            });
+        }
+        case 'getByClient': {
+            const clientId = this.getNodeParameter('clientId', itemIndex);
+            return await this.helpers.httpRequest({
+                method: 'GET',
+                url: `${baseUrl}/appointments/client/${clientId}`,
                 headers,
                 json: true,
             });
@@ -954,6 +1043,26 @@ async function handleFinancialOperations(operation, itemIndex, credentials) {
         }
         default:
             throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown financial operation: ${operation}`);
+    }
+}
+async function handleUsersOperations(operation, itemIndex, credentials) {
+    const baseUrl = credentials.baseUrl;
+    const apiKey = credentials.apiKey;
+    const headers = {
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/json',
+    };
+    switch (operation) {
+        case 'getAllPublic': {
+            return await this.helpers.httpRequest({
+                method: 'GET',
+                url: `${baseUrl}/public/users`,
+                headers,
+                json: true,
+            });
+        }
+        default:
+            throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Unknown users operation: ${operation}`);
     }
 }
 //# sourceMappingURL=GestorClientesMax.node.js.map

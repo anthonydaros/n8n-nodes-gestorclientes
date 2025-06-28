@@ -55,6 +55,10 @@ export class GestorClientesMax implements INodeType {
               name: 'Finanças',
               value: 'financial',
             },
+            {
+              name: 'Usuários',
+              value: 'users',
+            },
           ],
           default: 'client',
         },
@@ -101,6 +105,12 @@ export class GestorClientesMax implements INodeType {
               description: 'Deletar cliente',
               action: 'Deletar cliente',
             },
+            {
+              name: 'Search',
+              value: 'search',
+              description: 'Buscar clientes com filtros',
+              action: 'Buscar clientes com filtros',
+            },
           ],
           default: 'getAll',
         },
@@ -146,6 +156,12 @@ export class GestorClientesMax implements INodeType {
               value: 'delete',
               description: 'Deletar agendamento',
               action: 'Deletar agendamento',
+            },
+            {
+              name: 'Get By Client',
+              value: 'getByClient',
+              description: 'Buscar agendamentos por cliente',
+              action: 'Buscar agendamentos por cliente',
             },
           ],
           default: 'getAll',
@@ -209,6 +225,28 @@ export class GestorClientesMax implements INodeType {
           default: 'getAll',
         },
 
+        // Users Operations
+        {
+          displayName: 'Operation',
+          name: 'operation',
+          type: 'options',
+          noDataExpression: true,
+          displayOptions: {
+            show: {
+              resource: ['users'],
+            },
+          },
+          options: [
+            {
+              name: 'Get All Public',
+              value: 'getAllPublic',
+              description: 'Buscar todos os usuários públicos',
+              action: 'Buscar todos os usuários públicos',
+            },
+          ],
+          default: 'getAllPublic',
+        },
+
         // Client ID for get/update/delete operations
         {
           displayName: 'Client ID',
@@ -223,6 +261,37 @@ export class GestorClientesMax implements INodeType {
           default: '',
           required: true,
           description: 'ID do cliente',
+        },
+
+        // Client ID for appointment getByClient operation
+        {
+          displayName: 'Client ID',
+          name: 'clientId',
+          type: 'number',
+          displayOptions: {
+            show: {
+              resource: ['appointment'],
+              operation: ['getByClient'],
+            },
+          },
+          default: '',
+          required: true,
+          description: 'ID do cliente para buscar agendamentos',
+        },
+
+        // Search parameters for client search
+        {
+          displayName: 'Search Query',
+          name: 'searchQuery',
+          type: 'string',
+          displayOptions: {
+            show: {
+              resource: ['client'],
+              operation: ['search'],
+            },
+          },
+          default: '',
+          description: 'Termo de busca para pesquisar clientes (nome, email, telefone)',
         },
 
         // Appointment ID for get/update/delete operations
@@ -341,6 +410,7 @@ export class GestorClientesMax implements INodeType {
           },
           default: '',
           description: 'Descrição do agendamento',
+          noDataExpression: false,
         },
         {
           displayName: 'Data/Hora Início',
@@ -662,6 +732,8 @@ export class GestorClientesMax implements INodeType {
           responseData = await handleAppointmentOperations.call(this, operation, i, credentials);
         } else if (resource === 'financial') {
           responseData = await handleFinancialOperations.call(this, operation, i, credentials);
+        } else if (resource === 'users') {
+          responseData = await handleUsersOperations.call(this, operation, i, credentials);
         }
 
         if (!responseData) {
@@ -784,7 +856,16 @@ async function handleClientOperations(this: IExecuteFunctions, operation: string
           json: true,
         });      }
 
-
+      case 'search': {
+        const searchQuery = this.getNodeParameter('searchQuery', itemIndex) as string;
+        const queryParams = searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : '';
+        return await this.helpers.httpRequest({
+          method: 'GET',
+          url: `${baseUrl}/clients/search${queryParams}`,
+          headers,
+          json: true,
+        });
+      }
 
       default:
         throw new NodeOperationError(this.getNode(), `Unknown client operation: ${operation}`);
@@ -895,6 +976,16 @@ async function handleAppointmentOperations(this: IExecuteFunctions, operation: s
           headers,
           json: true,
         });      }
+
+      case 'getByClient': {
+        const clientId = this.getNodeParameter('clientId', itemIndex);
+        return await this.helpers.httpRequest({
+          method: 'GET',
+          url: `${baseUrl}/appointments/client/${clientId}`,
+          headers,
+          json: true,
+        });
+      }
 
 
 
@@ -1046,6 +1137,30 @@ async function handleFinancialOperations(this: IExecuteFunctions, operation: str
 
       default:
         throw new NodeOperationError(this.getNode(), `Unknown financial operation: ${operation}`);
+    }
+}
+
+async function handleUsersOperations(this: IExecuteFunctions, operation: string, itemIndex: number, credentials: any) {
+    const baseUrl = credentials.baseUrl;
+    const apiKey = credentials.apiKey;
+
+    const headers = {
+      'Authorization': `Bearer ${apiKey}`,
+      'Accept': 'application/json',
+    };
+
+    switch (operation) {
+      case 'getAllPublic': {
+        return await this.helpers.httpRequest({
+          method: 'GET',
+          url: `${baseUrl}/public/users`,
+          headers,
+          json: true,
+        });
+      }
+
+      default:
+        throw new NodeOperationError(this.getNode(), `Unknown users operation: ${operation}`);
     }
 }
 
