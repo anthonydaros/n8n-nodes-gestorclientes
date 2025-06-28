@@ -18,6 +18,7 @@ export class GestorClientesMaxUsers implements INodeType {
       defaults: {
         name: 'Gestor Clientes Max - Users',
       },
+      usableAsTool: true,
       inputs: [
         {
           displayName: '',

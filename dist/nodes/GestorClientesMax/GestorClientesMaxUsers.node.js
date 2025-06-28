@@ -15,6 +15,7 @@ class GestorClientesMaxUsers {
             defaults: {
                 name: 'Gestor Clientes Max - Users',
             },
+            usableAsTool: true,
             inputs: [
                 {
                     displayName: '',
